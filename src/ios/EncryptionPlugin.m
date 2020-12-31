@@ -17,6 +17,9 @@ EncryptionPlugin* encryptionPlugin;
 
 - (void)encrypt:(CDVInvokedUrlCommand*)command
 {
+
+    NSLog(@"EncryptionPlugin - INSIDE ENCRYPT");
+
     CDVPluginResult* pluginResult = nil;
     NSString* echo = [command.arguments objectAtIndex:0];
 
