@@ -1,4 +1,5 @@
 #import "EncryptionPlugin.h"
+#import <Cordova/CDVPlugin.h>
 
 @implementation EncryptionPlugin
 
