@@ -1,0 +1,23 @@
+
+{
+    "name": "cordova-plugin-encryptionplugin",
+    "version": "0.0.1",
+    "description": "EncryptionPlugin.",
+    "cordova": {
+      "id": "cordova-plugin-encryptionplugin",
+      "platforms": [
+        "android",
+        "ios"
+      ]
+    },
+    "keywords": [
+      "ecosystem:cordova",
+      "cordova-android",
+      "cordova-ios"
+    ],
+    "author": "Everis - Rodrigo Canales ",
+    "license": "MIT",
+    "dependencies": {
+      "xcode": "^2.1.0"
+    }
+  }

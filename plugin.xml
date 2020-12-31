@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+id="cordova-plugin-encryptionplugin" version="0.0.1">
+    <name>EncryptionPlugin</name>
+
+    <description>Entel ENcryption Plugin</description>
+    <license>MIT</license>
+
+    <engines>
+        <engine name="cordova" version=">=7.1.0"/>
+    </engines>
+
+    <js-module src="www/encryptionplugin.js" name="encryptionPlugin">
+        <clobbers target="window.plugins.encryptionPlugin" />
+    </js-module>
+    
+    <platform name="android">
+        
+    </platform>
+
+    <platform name="ios">
+
+		<config-file target="config.xml" parent="/*">
+			<feature name="EncryptionPlugin">
+				<param name="ios-package" value="EncryptionPlugin" />
+				<!--param name="ios-package" value="Encryptionios" onload="true" /-->
+			</feature>
+		</config-file>
+
+
+        <!--header-file src="src/ios/FingerViewController.h" />
+		<source-file src="src/ios/FingerViewController.m" /-->
+		<header-file src="src/ios/EncryptionPlugin.h" />
+		<source-file src="src/ios/EncryptionPlugin.m" />
+  		
+	</platform>
+</plugin>
