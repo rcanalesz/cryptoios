@@ -31,7 +31,7 @@ EncryptionPlugin* encryptionPlugin;
     if (echo != nil && [echo length] > 0) {
 
         NSLog(@"EncryptionPlugin - INSIDE ENCRYPT2.5");
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:echo];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:echo.message];
     } else {
 
         NSLog(@"EncryptionPlugin - INSIDE ENCRYPT2.5");
