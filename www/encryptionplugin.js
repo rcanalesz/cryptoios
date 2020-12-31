@@ -3,17 +3,13 @@ function EncryptionPlugin() {}
 
 // The function that passes work along to native shells
 EncryptionPlugin.prototype.encrypt = function(message, publicKey, successCallback, errorCallback) {
-  var options = {};
-  options.message = message;
-  options.publicKey = publicKey;
-  cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'encrypt', [options]);
+
+  cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'encrypt', [message,publicKey]);
 }
 
 EncryptionPlugin.prototype.decrypt = function(message, privateKey, successCallback, errorCallback) {
-    var options = {};
-    options.message = message;
-    options.privateKey = privateKey;
-    cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'decrypt', [options]);
+
+    cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'decrypt', [message,privateKey]);
   }
 
 // Installation constructor that binds EncryptionPlugin to window
