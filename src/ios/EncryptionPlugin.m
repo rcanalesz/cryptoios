@@ -26,6 +26,7 @@ EncryptionPlugin* encryptionPlugin;
 
 
     NSLog(@"EncryptionPlugin - INSIDE ENCRYPT2");
+    NSLog(@"EncryptionPlugin: %@", echo);
 
     if (echo != nil && [echo length] > 0) {
 
