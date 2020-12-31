@@ -23,13 +23,22 @@ EncryptionPlugin* encryptionPlugin;
     CDVPluginResult* pluginResult = nil;
     NSString* echo = [command.arguments objectAtIndex:0];
 
+
+    NSLog(@"EncryptionPlugin - INSIDE ENCRYPT2");
+
     if (echo != nil && [echo length] > 0) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:echo];
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
     }
 
+
+    NSLog(@"EncryptionPlugin - INSIDE ENCRYPT3");
+
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+
+    NSLog(@"EncryptionPlugin - INSIDE ENCRYPT4");
     
 }
 - (void)decrypt:(CDVInvokedUrlCommand*)command
