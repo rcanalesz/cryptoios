@@ -9,7 +9,7 @@
 + (EncryptionPlugin *)encryptionPlugin;
 
 - (void)encrypt:(CDVInvokedUrlCommand*)command;
-- (void)getdecryptwsq:(CDVInvokedUrlCommand*)command;
+- (void)decrypt:(CDVInvokedUrlCommand*)command;
 
 //- (void)sendResponseFinger:(NSString *)responseText callbackId:(NSString *)callbackId;
 
