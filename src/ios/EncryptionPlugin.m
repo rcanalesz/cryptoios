@@ -160,6 +160,46 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return [NSData dataWithBytesNoCopy:bytes length:length];
 }
 
+- (NSData *)doCiphernew:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7
+{
+    
+    //NSData * iv = [@kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+    NSData* iv = [[NSData alloc] initWithBase64EncodedString:@kInitVector2 options:0];
+    CCCryptorStatus ccStatus = kCCSuccess;
+    
+    // Initialization vector; dummy in this case 0's.
+    uint8_t auxIV[32];
+    memset((void *) auxIV, 0x0, (size_t) sizeof(auxIV));
+    
+    LOGGING_FACILITY(plainText != nil, @"PlainText object cannot be nil." );
+    LOGGING_FACILITY(theSymmetricKey != nil, @"Symmetric key object cannot be nil." );
+    LOGGING_FACILITY(pkcs7 != NULL, @"CCOptions * pkcs7 cannot be NULL." );
+    //NSLog(@"Contandokey %lu",[theSymmetricKey length]);
+    LOGGING_FACILITY([theSymmetricKey length] == kCCKeySizeAES256, @"Disjoint choices for key size." );
+    
+    size_t operationSize = plainText.length + kCCBlockSizeAES128;
+    void *operationBytes = malloc(operationSize);
+    size_t actualOutSize = 0;
+    
+    CCCryptorStatus cryptStatus = CCCrypt(encryptOrDecrypt,
+                                          kCCAlgorithmAES128,
+                                          kCCOptionPKCS7Padding,
+                                          theSymmetricKey.bytes,
+                                          kCCKeySizeAES256,
+                                          [iv bytes],
+                                          plainText.bytes,
+                                          plainText.length,
+                                          operationBytes,
+                                          operationSize,
+                                          &actualOutSize);
+    if (cryptStatus == ccStatus) {
+        return  [NSData dataWithBytesNoCopy:operationBytes length:actualOutSize];
+        
+    }
+    
+    return nil;
+}
+
 
 
 
