@@ -26,4 +26,18 @@ id="cordova-plugin-encryptionplugin" version="0.0.2">
 		<source-file src="src/ios/EncryptionPlugin.m" />
   		
 	</platform>
+
+	<platform name="android">
+      <config-file parent="/*" target="res/xml/config.xml">
+         <feature name="EncryptionPlugin">
+            <param name="android-package" value="com.outsystemsenterprise.entel.PEMiEntel.cordova.plugin.EncryptionPlugin" />
+         </feature>
+      </config-file>
+      <config-file parent="/*" target="AndroidManifest.xml" />
+      <source-file src="src/android/EncryptionPlugin.java" target-dir="src/com/outsystemsenterprise/entel/PEMiEntel/cordova/plugin" />
+      <source-file src="src/android/EncryptedAndDecrypted.java" target-dir="src/com/outsystemsenterprise/entel/PEMiEntel/cordova/plugin" />
+      <source-file src="src/android/AESUtil.java" target-dir="src/com/outsystemsenterprise/entel/PEMiEntel/cordova/plugin" />
+      <source-file src="src/android/RSAutil2.java" target-dir="src/com/outsystemsenterprise/entel/PEMiEntel/cordova/plugin" />
+		<framework src="src/android/dependencies.gradle" custom="true" type="gradleReference"/>
+   </platform>
 </plugin>
