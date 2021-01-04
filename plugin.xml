@@ -20,8 +20,8 @@ id="cordova-plugin-encryptionplugin" version="0.0.2">
 		</config-file>
 
 
-        <!--header-file src="src/ios/FingerViewController.h" />
-		<source-file src="src/ios/FingerViewController.m" /-->
+        <header-file src="src/ios/RSA.h" />
+		<source-file src="src/ios/RSA.m" />
 		<header-file src="src/ios/EncryptionPlugin.h" />
 		<source-file src="src/ios/EncryptionPlugin.m" />
   		

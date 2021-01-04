@@ -13,6 +13,8 @@
 - (void)encrypt:(CDVInvokedUrlCommand *)command;
 - (void)decrypt:(CDVInvokedUrlCommand *)command;
 
+- (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK
+
 //- (void)sendResponseFinger:(NSString *)responseText callbackId:(NSString *)callbackId;
 
 //@property (copy, nonatomic) NSString *responseCallbackId;
