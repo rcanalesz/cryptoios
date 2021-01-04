@@ -3,6 +3,20 @@
 
 #import "RSA.h"
 
+#define LOGGING_FACILITY(X, Y)  \
+if(!(X)) {          \
+NSLog(Y);       \
+}
+
+#define LOGGING_FACILITY1(X, Y, Z)  \
+if(!(X)) {              \
+NSLog(Y, Z);        \
+}
+
+#define kInitVector "BAEAGAOANAIAAAAA"
+#define kInitVector2 "PyrcyeOXUR2WVCP3v2sIkA=="
+#define kKey "V0A0L0E0R0I0A000"
+
 @implementation EncryptionPlugin
 
 //@synthesize responseCallbackId = _responseCallbackId;
@@ -10,6 +24,7 @@
 EncryptionPlugin* encryptionPlugin;
 
 
+static CCOptions pad = 0;
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 + (EncryptionPlugin *) encryptionPlugin {
