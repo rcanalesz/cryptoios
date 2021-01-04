@@ -13,9 +13,7 @@ if(!(X)) {              \
 NSLog(Y, Z);        \
 }
 
-#define kInitVector "BAEAGAOANAIAAAAA"
 #define kInitVector2 "PyrcyeOXUR2WVCP3v2sIkA=="
-#define kKey "V0A0L0E0R0I0A000"
 
 @implementation EncryptionPlugin
 
