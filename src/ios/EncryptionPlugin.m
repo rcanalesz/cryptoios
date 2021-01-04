@@ -79,11 +79,20 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
   
     NSString * decWithPrivKey = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
 
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-decWithPrivKey: %@", KeyRSAEncripted);
+    NSLog(@"EncryptionPlugin(decryptRSAEASString)-decWithPrivKey: %@", decWithPrivKey);
    
     NSData *prueba05bytes = [self base64DecodeString:decWithPrivKey];
 
-    return decWithPrivKey;
+    NSString * TramaAESEncripted = [string substringWithRange:NSMakeRange(684, string.length-684)];
+
+    NSLog(@"EncryptionPlugin(decryptRSAEASString)-TramaAESEncripted: %@", TramaAESEncripted);
+
+    NSData *decryptedResponse = [self doCiphernew:[self base64DecodeString:TramaAESEncripted] key:prueba05bytes context:kCCDecrypt padding:&pad];
+    NSString * finalString = [NSString stringWithCString:[decryptedResponse bytes] length:[decryptedResponse length]];
+
+    NSLog(@"EncryptionPlugin(decryptRSAEASString)-finalString: %@", finalString);
+    
+    return finalString;
 }
 
 - (NSData*)base64DecodeString:(NSString *)string

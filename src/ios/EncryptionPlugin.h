@@ -2,6 +2,8 @@
 #import <UIKit/UIKit.h>
 #import <Cordova/CDV.h>
 #import <Cordova/CDVPlugin.h>
+#import <Foundation/Foundation.h>
+#import <CommonCrypto/CommonCryptor.h>
 
 //#import "FingerViewController.h"
 
