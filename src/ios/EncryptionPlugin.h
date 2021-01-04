@@ -13,7 +13,8 @@
 - (void)encrypt:(CDVInvokedUrlCommand *)command;
 - (void)decrypt:(CDVInvokedUrlCommand *)command;
 
-- (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK
+- (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK;
+- (NSData*)base64DecodeString:(NSString *)string;
 
 //- (void)sendResponseFinger:(NSString *)responseText callbackId:(NSString *)callbackId;
 
