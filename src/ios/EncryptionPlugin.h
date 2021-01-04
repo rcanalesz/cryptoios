@@ -16,11 +16,11 @@
 - (void)decrypt:(CDVInvokedUrlCommand *)command;
 
 - (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK;
+- (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK;
+
 - (NSData*)base64DecodeString:(NSString *)string;
 - (NSData *)doCiphernew:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7;
+- (NSData*)createRandomNSData;
 
-//- (void)sendResponseFinger:(NSString *)responseText callbackId:(NSString *)callbackId;
-
-//@property (copy, nonatomic) NSString *responseCallbackId;
 
 @end

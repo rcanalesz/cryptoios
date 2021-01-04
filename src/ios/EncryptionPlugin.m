@@ -34,17 +34,25 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     encryptionPlugin = self;
 }
 
+//Cordova Functions
 - (void)encrypt:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    NSString* echo = [command.arguments objectAtIndex:0];
+    NSString* message = [command.arguments objectAtIndex:0];
+    NSString* publicKey = [command.arguments objectAtIndex:1];
 
 
-    if (echo != nil && [echo length] > 0) {
+    if (message != nil && [message length] > 0 && publicKey != nil && [publicKey length] > 0) {
+        
+        NSLog(@"EncryptionPlugin(encrypt)- LOG1");
 
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:echo];
+        NSString *result = [self encryptRSAAESString: message privateKey:privateKey ];
+
+        NSLog(@"EncryptionPlugin(encrypt)-result: %@", result);
+        
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
+
     } else {
-
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
     }
 
@@ -69,7 +77,8 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
         NSLog(@"EncryptionPlugin(decrypt)-result: %@", result);
         
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
+
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
     }
@@ -78,36 +87,44 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
 }
 
+//Main ios Functions
 - (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK
 {
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-string: %@", string);
-
     NSString *privkey = pvK;
 
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-privKey: %@", privkey);
-
     NSString * KeyRSAEncripted = [string substringWithRange:NSMakeRange(0, 684)];
-
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-keyRSAEnc: %@", KeyRSAEncripted);
   
     NSString * decWithPrivKey = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
-
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-decWithPrivKey: %@", decWithPrivKey);
    
     NSData *prueba05bytes = [self base64DecodeString:decWithPrivKey];
 
     NSString * TramaAESEncripted = [string substringWithRange:NSMakeRange(684, string.length-684)];
 
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-TramaAESEncripted: %@", TramaAESEncripted);
-
     NSData *decryptedResponse = [self doCiphernew:[self base64DecodeString:TramaAESEncripted] key:prueba05bytes context:kCCDecrypt padding:&pad];
     NSString * finalString = [NSString stringWithCString:[decryptedResponse bytes] length:[decryptedResponse length]];
-
-    NSLog(@"EncryptionPlugin(decryptRSAEASString)-finalString: %@", finalString);
     
     return finalString;
 }
+- (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK
+{
+    NSData * sKey = [self createRandomNSData];
+    NSString *signatureString = [sKey base64EncodedStringWithOptions:0];
+ 
+    NSString* pubkey = pbK;
+    
+    NSString *encWithPubKey = [RSA encryptString:signatureString publicKey:pubkey];
 
+    NSData *plainText = [string dataUsingEncoding:NSUTF8StringEncoding];
+ 
+    NSData *encryptedResponse = [self doCiphernew:plainText key:sKey context:kCCEncrypt padding:&pad];
+
+    NSString *UnionKey_Trama = [NSString stringWithFormat:@"%@%@", encWithPubKey,[self base64EncodeData:encryptedResponse]];
+    
+    return UnionKey_Trama;
+}
+
+
+//Additional Functions
 - (NSData*)base64DecodeString:(NSString *)string
 {
     if ([string length] == 0)
@@ -213,23 +230,18 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return nil;
 }
 
-
-
-
-
-
-
-
-
-
-
-/*- (void)sendResponseFinger:(NSString *)responseText callbackId:(NSString *)callbackId{
-    if (callbackId != nil) {
-        NSLog(@"In response = %@",self.responseCallbackId);
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:responseText];
-        [pluginResult setKeepCallbackAsBool:NO];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.responseCallbackId];
+-(NSData*)createRandomNSData
+{
+    int twentyMb           = 32;//20971520; Definir los bytes
+    NSMutableData* theData = [NSMutableData dataWithCapacity:twentyMb];
+    for( unsigned int i = 0 ; i < twentyMb/4 ; ++i )
+    {
+        u_int32_t randomBits = arc4random();
+        [theData appendBytes:(void*)&randomBits length:4];
     }
-}*/
+    
+    return theData;
+}
+
 
 @end
