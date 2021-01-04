@@ -9,6 +9,9 @@
 
 EncryptionPlugin* encryptionPlugin;
 
+
+static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 + (EncryptionPlugin *) encryptionPlugin {
     return encryptionPlugin;
 }
