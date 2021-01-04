@@ -21,6 +21,7 @@
 - (NSData*)base64DecodeString:(NSString *)string;
 - (NSData *)doCiphernew:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7;
 - (NSData*)createRandomNSData;
+- (NSString *)base64EncodeData:(NSData*)dataToConvert;
 
 
 @end
