@@ -30,11 +30,6 @@ public final class EncryptUtils {
     final static String ALGORITHM_DECRYPT = "AES/CBC/PKCS5Padding";
     final static String ENCRYPTIONKEY = "V0A0L0E0R0I0A000";
 
-    public static String encryptPassword(String excrypted){
-        return "ENC->" + excrypted;
-    }
-
-/*
     public static String encrypt(String plainText)
             throws IOException, NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
@@ -46,7 +41,7 @@ public final class EncryptUtils {
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
         byte[] result = cipher.doFinal(plainText.getBytes(CharEncoding.UTF_8));
         return Base64.encodeToString(result, Base64.DEFAULT);
-    }*/
+    }
 
 
 }

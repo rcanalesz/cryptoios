@@ -64,7 +64,7 @@ public class EncryptionPlugin extends CordovaPlugin {
           return false;
         }
 
-        String data = EncryptUtils.encryptPassword(mensaje);
+        String data = EncryptUtils.encrypt(mensaje);
 
         callbackContext.success(data);
         return true;
