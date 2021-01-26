@@ -3,10 +3,6 @@ package com.outsystemsenterprise.entel.PEMiEntel.cordova.plugin;
 import android.util.Base64;
 import android.util.Log;
 
-import com.entel.movil.constants.Constants;
-import com.entel.movil.networking.request.RequestContent;
-import com.entel.movil.networking.request.RequestContentEncrypt;
-
 import org.apache.commons.lang3.CharEncoding;
 import org.codehaus.jackson.map.ObjectMapper;
 

@@ -9,6 +9,13 @@ dependencies {
     //TEST SI SE PUEDE CAMBIAR
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+
+    implementation('com.octo.android.robospice:robospice:1.4.14') {
+        exclude group: 'org.apache.commons', module: 'commons-io'
+    }
+    implementation('com.octo.android.robospice:robospice-spring-android:1.4.14') {
+        exclude group: 'org.apache.commons', module: 'commons-io'
+    }
 	
 }
 
