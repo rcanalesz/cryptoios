@@ -54,8 +54,6 @@ public class EncryptedAndDecrypted {
 
         do {
             try {
-                
-                // Log.e("GENERATE_KEY_B64",keyBase64);
                 keyRSA = Base64.encodeToString(RSAutil2.encrypt(keyBase64,metodoPublic(clavePublica)),Base64.NO_WRAP).replaceAll("\\n+", "");
 
             } catch (BadPaddingException e) {

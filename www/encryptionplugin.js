@@ -9,8 +9,13 @@ EncryptionPlugin.prototype.encrypt = function(message, publicKey, successCallbac
 
 EncryptionPlugin.prototype.decrypt = function(message, privateKey, successCallback, errorCallback) {
 
-    cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'decrypt', [message,privateKey]);
-  }
+  cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'decrypt', [message,privateKey]);
+}
+
+EncryptionPlugin.prototype.encryptPassword = function(message, successCallback, errorCallback) {
+
+  cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'encryptPassword', [message]);
+}
 
 // Installation constructor that binds EncryptionPlugin to window
 EncryptionPlugin.install = function() {
