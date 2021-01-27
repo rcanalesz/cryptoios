@@ -43,12 +43,8 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 
     if (message != nil && [message length] > 0 && publicKey != nil && [publicKey length] > 0) {
-        
-        NSLog(@"EncryptionPlugin(encrypt)- LOG1");
 
         NSString *result = [self encryptRSAAESString: message publicKey:publicKey ];
-
-        NSLog(@"EncryptionPlugin(encrypt)-result: %@", result);
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
 
@@ -58,7 +54,6 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 
-    
 }
 - (void)decrypt:(CDVInvokedUrlCommand*)command
 {
@@ -66,17 +61,49 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSString* message = [command.arguments objectAtIndex:0];
     NSString* privateKey = [command.arguments objectAtIndex:1];
 
-    NSLog(@"EncryptionPlugin(decrypt)-message: %@", message);
-    NSLog(@"EncryptionPlugin(decrypt)-privateKey: %@", privateKey);
-
     if (message != nil && [message length] > 0 && privateKey != nil && [privateKey length] > 0) {
-        
-        NSLog(@"EncryptionPlugin(decrypt)- LOG1");
 
         NSString *result = [self decryptRSAEASString: message privateKey:privateKey ];
 
-        NSLog(@"EncryptionPlugin(decrypt)-result: %@", result);
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
+
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+}
+- (void)encryptRSA:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString* message = [command.arguments objectAtIndex:0];
+    NSString* publicKey = [command.arguments objectAtIndex:1];
+
+
+    if (message != nil && [message length] > 0 && publicKey != nil && [publicKey length] > 0) {
+
+        NSString *result = [self encryptRSAString: message publicKey:publicKey ];
         
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
+
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+}
+- (void)decryptRSA:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString* message = [command.arguments objectAtIndex:0];
+    NSString* privateKey = [command.arguments objectAtIndex:1];
+
+    if (message != nil && [message length] > 0 && privateKey != nil && [privateKey length] > 0) {
+
+        NSString *result = [self decryptRSAString: message privateKey:privateKey ];
+
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
 
     } else {
@@ -123,6 +150,23 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return UnionKey_Trama;
 }
 
+- (NSString*)decryptRSAString:(NSString*)string privateKey:(NSString*)pvK
+{
+    NSString *privkey = pvK;
+  
+    NSString * finalString = [RSA decryptString:string privateKey:privkey];
+
+    return finalString;
+}
+
+- (NSString*)encryptRSAString:(NSString*)string publicKey:(NSString*)pbK
+{
+    NSString* pubkey = pbK;
+    
+    NSString *finalString = [RSA encryptString:string publicKey:pubkey];
+
+    return finalString;
+}
 
 //Additional Functions
 - (NSData*)base64DecodeString:(NSString *)string

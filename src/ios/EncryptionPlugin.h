@@ -14,9 +14,13 @@
 
 - (void)encrypt:(CDVInvokedUrlCommand *)command;
 - (void)decrypt:(CDVInvokedUrlCommand *)command;
+- (void)encryptRSA:(CDVInvokedUrlCommand *)command;
+- (void)decryptRSA:(CDVInvokedUrlCommand *)command;
 
 - (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK;
 - (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK;
+- (NSString*)decryptRSAString:(NSString*)string privateKey:(NSString*)pvK;
+- (NSString*)encryptRSAString:(NSString*)string publicKey:(NSString*)pbK;
 
 - (NSData*)base64DecodeString:(NSString *)string;
 - (NSData *)doCiphernew:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7;
