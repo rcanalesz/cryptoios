@@ -176,7 +176,7 @@ static NSData *base64_decode(NSString *str){
 	if(!data){
 		NSLog(@"DATA NIL");
 	}
-	data = [RSA stripPrivateKeyHeader:data];
+	//data = [RSA stripPrivateKeyHeader:data];
 	if(!data){
 		NSLog(@"AddPrvKey 1nil");
 		return nil;
