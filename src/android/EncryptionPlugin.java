@@ -78,8 +78,21 @@ public class EncryptionPlugin extends CordovaPlugin {
         
         callbackContext.success(data);
         return true;
-      }
-      else {
+      } else if (action.equals("decryptRSA")){
+        try {
+          mensaje = args.getString(0);
+          clavePrivada =  args.getString(1);
+
+        } catch (JSONException e) {
+          callbackContext.error("Error encontrado: " + e.getMessage());
+          return false;
+        }
+        String data =  EncryptedAndDecrypted.decryptRSA(mensaje, clavePrivada);
+        
+        callbackContext.success(data);
+        return true;
+
+      } else {
 
         callbackContext.error("\"" + action + "\" no es una acción reconocida.");
         return false;

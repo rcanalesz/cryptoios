@@ -22,6 +22,11 @@ EncryptionPlugin.prototype.encryptRSA = function(message, publicKey, successCall
   cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'encryptRSA', [message,publicKey]);
 }
 
+EncryptionPlugin.prototype.decryptRSA = function(message, privateKey, successCallback, errorCallback) {
+
+  cordova.exec(successCallback, errorCallback, 'EncryptionPlugin', 'decryptRSA', [message,privateKey]);
+}
+
 // Installation constructor that binds EncryptionPlugin to window
 EncryptionPlugin.install = function() {
   if (!window.plugins) {

@@ -193,4 +193,38 @@ public class EncryptedAndDecrypted {
 
     }
 
+    public static String decryptRSA(String mensaje,String clavePrivada) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, IOException {
+
+
+        String respuestaDec = null;
+
+        byte[] keyencondeRSA = Base64.decode(mensaje,Base64.NO_WRAP);
+
+        try {
+            respuestaDec = Base64.encodeToString(RSAutil2.decrypt(keyencondeRSA,metodoPrivate(clavePrivada).getBytes()),Base64.NO_WRAP).replaceAll("\\n+", "");
+
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+
+        return respuestaDec;
+
+    }
+
 }
