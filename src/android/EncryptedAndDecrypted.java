@@ -201,7 +201,7 @@ public class EncryptedAndDecrypted {
         byte[] keyencondeRSA = Base64.decode(mensaje,Base64.NO_WRAP);
 
         try {
-            respuestaDec = Base64.encodeToString(RSAutil2.decrypt(keyencondeRSA,metodoPrivate(clavePrivada).getBytes()),Base64.NO_WRAP).replaceAll("\\n+", "");
+            respuestaDec = new String (RSAutil2.decrypt(keyencondeRSA,metodoPrivate(clavePrivada).getBytes()), "UTF-8");
 
         } catch (BadPaddingException e) {
             e.printStackTrace();
