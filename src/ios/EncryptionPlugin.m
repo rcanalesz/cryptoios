@@ -156,7 +156,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSString * KeyRSAEncripted = string;
 
     NSLog(@"EncryptionPlugin(decrypt)-message: %@", KeyRSAEncripted);
-    NSLog(@"EncryptionPlugin(decrypt)-pvK: %@", pvK);
+    NSLog(@"EncryptionPlugin(decrypt)-pvK: %@", privkey);
   
     NSString * decWithPrivKey = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
 
