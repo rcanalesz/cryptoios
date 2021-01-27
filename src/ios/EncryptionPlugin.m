@@ -115,6 +115,24 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 }
 
 //Main ios Functions
+- (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK
+{
+    NSData * sKey = [self createRandomNSData];
+    NSString *signatureString = [sKey base64EncodedStringWithOptions:0];
+ 
+    NSString* pubkey = pbK;
+    
+    NSString *encWithPubKey = [RSA encryptString:signatureString publicKey:pubkey];
+
+    NSData *plainText = [string dataUsingEncoding:NSUTF8StringEncoding];
+ 
+    NSData *encryptedResponse = [self doCiphernew:plainText key:sKey context:kCCEncrypt padding:&pad];
+
+    NSString *UnionKey_Trama = [NSString stringWithFormat:@"%@%@", encWithPubKey,[self base64EncodeData:encryptedResponse]];
+    
+    return UnionKey_Trama;
+}
+
 - (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK
 {
     NSString *privkey = pvK;
@@ -135,22 +153,14 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
     return finalString;
 }
-- (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK
+
+- (NSString*)encryptRSAString:(NSString*)string publicKey:(NSString*)pbK
 {
-    NSData * sKey = [self createRandomNSData];
-    NSString *signatureString = [sKey base64EncodedStringWithOptions:0];
- 
     NSString* pubkey = pbK;
     
-    NSString *encWithPubKey = [RSA encryptString:signatureString publicKey:pubkey];
+    NSString *finalString = [RSA encryptString:string publicKey:pubkey];
 
-    NSData *plainText = [string dataUsingEncoding:NSUTF8StringEncoding];
- 
-    NSData *encryptedResponse = [self doCiphernew:plainText key:sKey context:kCCEncrypt padding:&pad];
-
-    NSString *UnionKey_Trama = [NSString stringWithFormat:@"%@%@", encWithPubKey,[self base64EncodeData:encryptedResponse]];
-    
-    return UnionKey_Trama;
+    return finalString;
 }
 
 - (NSString*)decryptRSAString:(NSString*)string privateKey:(NSString*)pvK
@@ -174,15 +184,6 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSLog(@"EncryptionPlugin(decrypt)-final2: %@", finalString);
 
     return decWithPrivKey;
-}
-
-- (NSString*)encryptRSAString:(NSString*)string publicKey:(NSString*)pbK
-{
-    NSString* pubkey = pbK;
-    
-    NSString *finalString = [RSA encryptString:string publicKey:pubkey];
-
-    return finalString;
 }
 
 //Additional Functions
