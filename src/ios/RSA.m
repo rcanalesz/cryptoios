@@ -170,8 +170,10 @@ static NSData *base64_decode(NSString *str){
 	NSData *data = base64_decode(key);
 	data = [RSA stripPrivateKeyHeader:data];
 	if(!data){
+		NSLog(@"AddPrvKey 1nil");
 		return nil;
 	}
+	NSLog(@"AddPrvKey 1");
 
 	//a tag to read/write keychain storage
 	NSString *tag = @"RSAUtil_PrivKey";
@@ -193,10 +195,12 @@ static NSData *base64_decode(NSString *str){
 
 	CFTypeRef persistKey = nil;
 	OSStatus status = SecItemAdd((__bridge CFDictionaryRef)privateKey, &persistKey);
+	NSLog(@"AddPrvKey 2");
 	if (persistKey != nil){
 		CFRelease(persistKey);
 	}
 	if ((status != noErr) && (status != errSecDuplicateItem)) {
+		NSLog(@"AddPrvKey 2nil");
 		return nil;
 	}
 
@@ -206,9 +210,11 @@ static NSData *base64_decode(NSString *str){
 	[privateKey setObject:(__bridge id) kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
 
 	// Now fetch the SecKeyRef version of the key
+	NSLog(@"AddPrvKey 3");
 	SecKeyRef keyRef = nil;
 	status = SecItemCopyMatching((__bridge CFDictionaryRef)privateKey, (CFTypeRef *)&keyRef);
 	if(status != noErr){
+		NSLog(@"AddPrvKey 3nil");
 		return nil;
 	}
 	return keyRef;
