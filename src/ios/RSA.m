@@ -46,18 +46,14 @@ static NSData *base64_decode(NSString *str){
 }
 
 + (NSData *)stripPrivateKeyHeader:(NSData *)d_key{
-	if (d_key == nil) NSLog(@"stripPVK 1nil");
 	if (d_key == nil) return(nil);
 
 	unsigned long len = [d_key length];
-	if (!len) NSLog(@"stripPVK 2nil");
 	if (!len) return(nil);
 
 	unsigned char *c_key = (unsigned char *)[d_key bytes];
 	unsigned int  idx	 = 22;
 
-
-	if (0x04 != c_key[idx++]) NSLog(@"stripPVK 33nil");
 	if (0x04 != c_key[idx++]) return nil;
 
 	unsigned int c_len = c_key[idx++];
@@ -68,7 +64,6 @@ static NSData *base64_decode(NSString *str){
 		int byteCount = c_len & 0x7f;
 		if (byteCount + idx > len) {
 			//rsa length field longer than buffer
-			NSLog(@"stripPVK 4nil");
 			return nil;
 		}
 		unsigned int accum = 0;
@@ -168,20 +163,12 @@ static NSData *base64_decode(NSString *str){
 	key = [key stringByReplacingOccurrencesOfString:@"\t" withString:@""];
 	key = [key stringByReplacingOccurrencesOfString:@" "  withString:@""];
 
-
-	NSLog(@"AddPrvKey %@", key);
-
 	// This will be base64 encoded, decode it.
 	NSData *data = base64_decode(key);
+	data = [RSA stripPrivateKeyHeader:data];
 	if(!data){
-		NSLog(@"DATA NIL");
-	}
-	//data = [RSA stripPrivateKeyHeader:data];
-	if(!data){
-		NSLog(@"AddPrvKey 1nil");
 		return nil;
 	}
-	NSLog(@"AddPrvKey 1");
 
 	//a tag to read/write keychain storage
 	NSString *tag = @"RSAUtil_PrivKey";
@@ -203,12 +190,10 @@ static NSData *base64_decode(NSString *str){
 
 	CFTypeRef persistKey = nil;
 	OSStatus status = SecItemAdd((__bridge CFDictionaryRef)privateKey, &persistKey);
-	NSLog(@"AddPrvKey 2");
 	if (persistKey != nil){
 		CFRelease(persistKey);
 	}
 	if ((status != noErr) && (status != errSecDuplicateItem)) {
-		NSLog(@"AddPrvKey 2nil");
 		return nil;
 	}
 
@@ -218,11 +203,9 @@ static NSData *base64_decode(NSString *str){
 	[privateKey setObject:(__bridge id) kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
 
 	// Now fetch the SecKeyRef version of the key
-	NSLog(@"AddPrvKey 3");
 	SecKeyRef keyRef = nil;
 	status = SecItemCopyMatching((__bridge CFDictionaryRef)privateKey, (CFTypeRef *)&keyRef);
 	if(status != noErr){
-		NSLog(@"AddPrvKey 3nil");
 		return nil;
 	}
 	return keyRef;
@@ -354,29 +337,20 @@ static NSData *base64_decode(NSString *str){
 + (NSString *)decryptString:(NSString *)str privateKey:(NSString *)privKey{
 	
     NSData *data = [[NSData alloc] initWithBase64EncodedString:str options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    
-    NSLog(@"DecryptString 1");
 
 	data = [RSA decryptData:data privateKey:privKey];
 
-	NSLog(@"DecryptString 2");
-
     NSString *ret = [data base64EncodedStringWithOptions:0];
-
-	NSLog(@"DecryptString 3");
 
 	return ret;
 }
 
 + (NSData *)decryptData:(NSData *)data privateKey:(NSString *)privKey{
-	NSLog(@"DecryptData 1");
 	if(!data || !privKey){
-		NSLog(@"DecryptData nil 1");
 		return nil;
 	}
 	SecKeyRef keyRef = [RSA addPrivateKey:privKey];
 	if(!keyRef){
-		NSLog(@"DecryptData nil 2");
 		return nil;
 	}
 	return [RSA decryptData:data withKeyRef:keyRef];
@@ -421,4 +395,100 @@ static NSData *base64_decode(NSString *str){
 	return [RSA decryptData:data withKeyRef:keyRef];
 }
 /* END: Encryption & Decryption with RSA public key */
+
+
+/*START: Custom methods for RSA in Cordova*/
+
++ (NSString *)decryptStringCustom:(NSString *)str privateKey:(NSString *)privKey{
+	
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:str options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+	data = [RSA decryptDataCustom:data privateKey:privKey];
+
+    NSString *ret = [data base64EncodedStringWithOptions:0];
+
+	return ret;
+}
+
++ (NSData *)decryptDataCustom:(NSData *)data privateKey:(NSString *)privKey{
+	if(!data || !privKey){
+		return nil;
+	}
+	SecKeyRef keyRef = [RSA addPrivateKeyCustom:privKey];
+	if(!keyRef){
+		return nil;
+	}
+	return [RSA decryptData:data withKeyRef:keyRef];
+}
+
++ (SecKeyRef)addPrivateKeyCustom:(NSString *)key{
+	NSRange spos;
+	NSRange epos;
+	spos = [key rangeOfString:@"-----BEGIN RSA PRIVATE KEY-----"];
+	if(spos.length > 0){
+		epos = [key rangeOfString:@"-----END RSA PRIVATE KEY-----"];
+	}else{
+		spos = [key rangeOfString:@"-----BEGIN PRIVATE KEY-----"];
+		epos = [key rangeOfString:@"-----END PRIVATE KEY-----"];
+	}
+	if(spos.location != NSNotFound && epos.location != NSNotFound){
+		NSUInteger s = spos.location + spos.length;
+		NSUInteger e = epos.location;
+		NSRange range = NSMakeRange(s, e-s);
+		key = [key substringWithRange:range];
+	}
+	key = [key stringByReplacingOccurrencesOfString:@"\r" withString:@""];
+	key = [key stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+	key = [key stringByReplacingOccurrencesOfString:@"\t" withString:@""];
+	key = [key stringByReplacingOccurrencesOfString:@" "  withString:@""];
+
+	// This will be base64 encoded, decode it.
+	NSData *data = base64_decode(key);
+	//data = [RSA stripPrivateKeyHeader:data];
+	if(!data){
+		return nil;
+	}
+
+	//a tag to read/write keychain storage
+	NSString *tag = @"RSAUtil_PrivKey";
+	NSData *d_tag = [NSData dataWithBytes:[tag UTF8String] length:[tag length]];
+
+	// Delete any old lingering key with the same tag
+	NSMutableDictionary *privateKey = [[NSMutableDictionary alloc] init];
+	[privateKey setObject:(__bridge id) kSecClassKey forKey:(__bridge id)kSecClass];
+	[privateKey setObject:(__bridge id) kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
+	[privateKey setObject:d_tag forKey:(__bridge id)kSecAttrApplicationTag];
+	SecItemDelete((__bridge CFDictionaryRef)privateKey);
+
+	// Add persistent version of the key to system keychain
+	[privateKey setObject:data forKey:(__bridge id)kSecValueData];
+	[privateKey setObject:(__bridge id) kSecAttrKeyClassPrivate forKey:(__bridge id)
+	 kSecAttrKeyClass];
+	[privateKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)
+	 kSecReturnPersistentRef];
+
+	CFTypeRef persistKey = nil;
+	OSStatus status = SecItemAdd((__bridge CFDictionaryRef)privateKey, &persistKey);
+	if (persistKey != nil){
+		CFRelease(persistKey);
+	}
+	if ((status != noErr) && (status != errSecDuplicateItem)) {
+		return nil;
+	}
+
+	[privateKey removeObjectForKey:(__bridge id)kSecValueData];
+	[privateKey removeObjectForKey:(__bridge id)kSecReturnPersistentRef];
+	[privateKey setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnRef];
+	[privateKey setObject:(__bridge id) kSecAttrKeyTypeRSA forKey:(__bridge id)kSecAttrKeyType];
+
+	// Now fetch the SecKeyRef version of the key
+	SecKeyRef keyRef = nil;
+	status = SecItemCopyMatching((__bridge CFDictionaryRef)privateKey, (CFTypeRef *)&keyRef);
+	if(status != noErr){
+		return nil;
+	}
+	return keyRef;
+}
+
+/*END: Custom methods for RSA in Cordova*/
 @end

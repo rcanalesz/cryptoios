@@ -17,4 +17,7 @@
 + (NSString *)decryptString:(NSString *)str privateKey:(NSString *)privKey;
 + (NSData *)decryptData:(NSData *)data privateKey:(NSString *)privKey;
 
++ (NSString *)decryptStringCustom:(NSString *)str privateKey:(NSString *)privKey;
++ (NSData *)decryptDataCustom:(NSData *)data privateKey:(NSString *)privKey;
+
 @end
