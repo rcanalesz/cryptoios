@@ -160,13 +160,12 @@ public class EncryptedAndDecrypted {
     }
 
     public static String encryptRSA(String mensaje,String clavePublica) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException {
-        
-        String keyBase64 = Base64.encodeToString(mensaje.getBytes("UTF-8"), Base64.NO_WRAP);
+
         String keyRSA = null;
 
         do {
             try {
-                keyRSA = Base64.encodeToString(RSAutil2.encrypt(keyBase64,metodoPublic(clavePublica)),Base64.NO_WRAP).replaceAll("\\n+", "");
+                keyRSA = Base64.encodeToString(RSAutil2.encrypt(mensaje,metodoPublic(clavePublica)),Base64.NO_WRAP).replaceAll("\\n+", "");
 
             } catch (BadPaddingException e) {
                 e.printStackTrace();
