@@ -163,6 +163,9 @@ static NSData *base64_decode(NSString *str){
 	key = [key stringByReplacingOccurrencesOfString:@"\t" withString:@""];
 	key = [key stringByReplacingOccurrencesOfString:@" "  withString:@""];
 
+
+	NSLog(@"AddPrvKey %@", key);
+
 	// This will be base64 encoded, decode it.
 	NSData *data = base64_decode(key);
 	data = [RSA stripPrivateKeyHeader:data];
