@@ -159,4 +159,39 @@ public class EncryptedAndDecrypted {
         return generalclass;
     }
 
+    public static String encryptRSA(String mensaje,String clavePublica){
+
+        //String keyBase64 = Base64.encodeToString(mensaje, Base64.NO_WRAP);??
+        String keyRSA = null;
+
+        do {
+            try {
+                keyRSA = Base64.encodeToString(RSAutil2.encrypt(mensaje,metodoPublic(clavePublica)),Base64.NO_WRAP).replaceAll("\\n+", "");
+
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                throw e;
+            } catch (Exception e){
+                e.printStackTrace();
+                throw e;
+            }
+
+        } while (keyRSA == null);
+
+        return keyRSA;
+
+    }
+
 }
