@@ -155,11 +155,17 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSString *privkey = pvK;
     NSString * KeyRSAEncripted = string;
 
-    NSLog(@"EncryptionPlugin(decrypt)-message: %@", string);
-    NSLog(@"EncryptionPlugin(decrypt)-pvK: %@", KeyRSAEncripted);
+    NSLog(@"EncryptionPlugin(decrypt)-message: %@", KeyRSAEncripted);
+    NSLog(@"EncryptionPlugin(decrypt)-pvK: %@", pvK);
   
-    NSString * finalString = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
+    NSString * decWithPrivKey = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
 
+
+    NSLog(@"EncryptionPlugin(decrypt)-final: %@", decWithPrivKey);
+
+    NSData *prueba05bytes = [self base64DecodeString:decWithPrivKey];
+
+    NSString * finalString = [NSString stringWithCString:[prueba05bytes bytes] length:[prueba05bytes length]];
 
     NSLog(@"EncryptionPlugin(decrypt)-final: %@", finalString);
 
