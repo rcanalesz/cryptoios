@@ -338,18 +338,28 @@ static NSData *base64_decode(NSString *str){
 	
     NSData *data = [[NSData alloc] initWithBase64EncodedString:str options:NSDataBase64DecodingIgnoreUnknownCharacters];
     
+    NSLog(@"DecryptString 1");
+
 	data = [RSA decryptData:data privateKey:privKey];
 
+	NSLog(@"DecryptString 2");
+
     NSString *ret = [data base64EncodedStringWithOptions:0];
+
+	NSLog(@"DecryptString 3");
+
 	return ret;
 }
 
 + (NSData *)decryptData:(NSData *)data privateKey:(NSString *)privKey{
+	NSLog(@"DecryptData 1");
 	if(!data || !privKey){
+		NSLog(@"DecryptData nil 1");
 		return nil;
 	}
 	SecKeyRef keyRef = [RSA addPrivateKey:privKey];
 	if(!keyRef){
+		NSLog(@"DecryptData nil 2");
 		return nil;
 	}
 	return [RSA decryptData:data withKeyRef:keyRef];
