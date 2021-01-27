@@ -46,14 +46,18 @@ static NSData *base64_decode(NSString *str){
 }
 
 + (NSData *)stripPrivateKeyHeader:(NSData *)d_key{
+	if (d_key == nil) NSLog(@"stripPVK 3nil");
 	if (d_key == nil) return(nil);
 
 	unsigned long len = [d_key length];
+	if (!len) NSLog(@"stripPVK 3nil");
 	if (!len) return(nil);
 
 	unsigned char *c_key = (unsigned char *)[d_key bytes];
 	unsigned int  idx	 = 22;
 
+
+	if (0x04 != c_key[idx++]) NSLog(@"stripPVK 3nil");
 	if (0x04 != c_key[idx++]) return nil;
 
 	unsigned int c_len = c_key[idx++];
@@ -64,6 +68,7 @@ static NSData *base64_decode(NSString *str){
 		int byteCount = c_len & 0x7f;
 		if (byteCount + idx > len) {
 			//rsa length field longer than buffer
+			NSLog(@"stripPVK 4nil");
 			return nil;
 		}
 		unsigned int accum = 0;
@@ -168,6 +173,9 @@ static NSData *base64_decode(NSString *str){
 
 	// This will be base64 encoded, decode it.
 	NSData *data = base64_decode(key);
+	if(!data){
+		NSLog(@"DATA NIL");
+	}
 	data = [RSA stripPrivateKeyHeader:data];
 	if(!data){
 		NSLog(@"AddPrvKey 1nil");
