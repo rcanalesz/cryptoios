@@ -13,7 +13,9 @@ if(!(X)) {              \
 NSLog(Y, Z);        \
 }
 
+#define kInitVector "BAEAGAOANAIAAAAA"
 #define kInitVector2 "PyrcyeOXUR2WVCP3v2sIkA=="
+#define kKey "V0A0L0E0R0I0A000"
 
 @implementation EncryptionPlugin
 
@@ -114,6 +116,26 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
 }
 
+- (void)encryptPasswordLegado:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString* message = [command.arguments objectAtIndex:0];
+
+    if (message != nil && [message length] > 0 ) {
+
+        NSString *result = [self encryptPasswordLegado: message ];
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result];
+
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Arg was null"];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+}
+
+
 //Main ios Functions
 - (NSString*)encryptRSAAESString:(NSString*)string publicKey:(NSString*)pbK
 {
@@ -174,6 +196,36 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     return finalString;
 }
+
+- (NSString*)encryptPasswordLegado:(NSString*)string
+{
+    
+    NSData *asciiStringData = [string dataUsingEncoding:NSASCIIStringEncoding
+                                   allowLossyConversion:YES];
+    
+    NSString *correctString = [NSString stringWithCString:[string cStringUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding];
+    
+    if([correctString length] < 8)
+    {
+        correctString = [@"ENTEL" stringByAppendingString:correctString];
+    }
+
+     NSData * sKey = [@kKey dataUsingEncoding:NSUTF8StringEncoding];
+     NSRange fullRange;
+     fullRange.length = [correctString length];
+     fullRange.location = 0;
+     
+     uint8_t buffer[[correctString length]];
+     
+     [correctString getBytes:&buffer maxLength:[correctString length] usedLength:NULL encoding:NSUTF8StringEncoding options:0 range:fullRange remainingRange:NULL];
+     
+     NSData *plainText = [NSData dataWithBytes:buffer length:[correctString length]];
+     
+     NSData *encryptedResponse = [self doCipher:plainText key:sKey context:kCCEncrypt padding:&pad];
+     return [self base64EncodeData:encryptedResponse];
+}
+
+
 
 //Additional Functions
 - (NSData*)base64DecodeString:(NSString *)string
@@ -240,6 +292,135 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
     return [NSData dataWithBytesNoCopy:bytes length:length];
 }
+
+- (NSData *)doCipher:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7
+{
+    
+    NSData * iv = [@kInitVector dataUsingEncoding:NSUTF8StringEncoding];
+    
+    CCCryptorStatus ccStatus = kCCSuccess;
+    // Symmetric crypto reference.
+    CCCryptorRef thisEncipher = NULL;
+    // Cipher Text container.
+    NSData * cipherOrPlainText = nil;
+    // Pointer to output buffer.
+    uint8_t * bufferPtr = NULL;
+    // Total size of the buffer.
+    size_t bufferPtrSize = 0;
+    // Remaining bytes to be performed on.
+    size_t remainingBytes = 0;
+    // Number of bytes moved to buffer.
+    size_t movedBytes = 0;
+    // Length of plainText buffer.
+    size_t plainTextBufferSize = 0;
+    // Placeholder for total written.
+    size_t totalBytesWritten = 0;
+    // A friendly helper pointer.
+    uint8_t * ptr;
+    
+    // Initialization vector; dummy in this case 0's.
+    uint8_t auxIV[16];
+    memset((void *) auxIV, 0x0, (size_t) sizeof(auxIV));
+    
+    LOGGING_FACILITY(plainText != nil, @"PlainText object cannot be nil." );
+    LOGGING_FACILITY(theSymmetricKey != nil, @"Symmetric key object cannot be nil." );
+    LOGGING_FACILITY(pkcs7 != NULL, @"CCOptions * pkcs7 cannot be NULL." );
+    LOGGING_FACILITY([theSymmetricKey length] == kCCKeySizeAES128, @"Disjoint choices for key size." );
+    
+    plainTextBufferSize = [plainText length];
+    
+    LOGGING_FACILITY(plainTextBufferSize > 0, @"Empty plaintext passed in." );
+    
+    // We don't want to toss padding on if we don't need to
+    if(encryptOrDecrypt == kCCEncrypt)
+    {
+        if(*pkcs7 != kCCOptionECBMode)
+        {
+            if((plainTextBufferSize % kCCBlockSizeAES128) == 0)
+            {
+                *pkcs7 = 0x0000;
+            }
+            else
+            {
+                *pkcs7 = kCCOptionPKCS7Padding;
+            }
+        }
+    }
+    else if(encryptOrDecrypt != kCCDecrypt)
+    {
+        LOGGING_FACILITY1( 0, @"Invalid CCOperation parameter [%d] for cipher context.", *pkcs7 );
+    }
+    
+    // Create and Initialize the crypto reference.
+    ccStatus = CCCryptorCreate( encryptOrDecrypt,
+                               kCCAlgorithmAES128,
+                               *pkcs7,
+                               (const void *)[theSymmetricKey bytes],
+                               kCCKeySizeAES128,
+                               [iv bytes],
+                               &thisEncipher
+                               );
+    
+    LOGGING_FACILITY1( ccStatus == kCCSuccess, @"Problem creating the context, ccStatus == %d.", ccStatus );
+    
+    // Calculate byte block alignment for all calls through to and including final.
+    bufferPtrSize = CCCryptorGetOutputLength(thisEncipher, plainTextBufferSize, true);
+    
+    // Allocate buffer.
+    bufferPtr = malloc( bufferPtrSize * sizeof(uint8_t) );
+    
+    // Zero out buffer.
+    memset((void *)bufferPtr, 0x0, bufferPtrSize);
+    
+    // Initialize some necessary book keeping.
+    
+    ptr = bufferPtr;
+    
+    // Set up initial size.
+    remainingBytes = bufferPtrSize;
+    
+    // Actually perform the encryption or decryption.
+    ccStatus = CCCryptorUpdate( thisEncipher,
+                               (const void *) [plainText bytes],
+                               plainTextBufferSize,
+                               ptr,
+                               remainingBytes,
+                               &movedBytes
+                               );
+    
+    LOGGING_FACILITY1( ccStatus == kCCSuccess, @"Problem with CCCryptorUpdate, ccStatus == %d.", ccStatus );
+    
+    // Handle book keeping.
+    ptr += movedBytes;
+    remainingBytes -= movedBytes;
+    totalBytesWritten += movedBytes;
+    
+    // Finalize everything to the output buffer.
+    ccStatus = CCCryptorFinal(  thisEncipher,
+                              ptr,
+                              remainingBytes,
+                              &movedBytes
+                              );
+    
+    totalBytesWritten += movedBytes;
+    
+    if(thisEncipher)
+    {
+        (void) CCCryptorRelease(thisEncipher);
+        thisEncipher = NULL;
+    }
+    
+    LOGGING_FACILITY1( ccStatus == kCCSuccess, @"Problem with encipherment ccStatus == %d", ccStatus );
+    
+    cipherOrPlainText = [NSData dataWithBytes:(const void *)bufferPtr length:(NSUInteger)totalBytesWritten];
+    
+    if(bufferPtr) free(bufferPtr);
+    
+    return cipherOrPlainText;
+    
+    
+}
+
 
 - (NSData *)doCiphernew:(NSData *)plainText key:(NSData *)theSymmetricKey context:(CCOperation)encryptOrDecrypt padding:(CCOptions *)pkcs7
 {
