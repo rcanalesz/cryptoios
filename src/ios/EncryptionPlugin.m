@@ -204,11 +204,6 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
                                    allowLossyConversion:YES];
     
     NSString *correctString = [NSString stringWithCString:[string cStringUsingEncoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding];
-    
-    if([correctString length] < 8)
-    {
-        correctString = [@"ENTEL" stringByAppendingString:correctString];
-    }
 
      NSData * sKey = [@kKey dataUsingEncoding:NSUTF8StringEncoding];
      NSRange fullRange;
