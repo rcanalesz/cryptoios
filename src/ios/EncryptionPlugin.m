@@ -172,7 +172,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     NSString * finalString = [NSString stringWithCString:[prueba05bytes bytes] length:[prueba05bytes length]];
 
-    return decWithPrivKey;
+    return finalString;
 }
 
 //Additional Functions
