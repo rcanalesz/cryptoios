@@ -116,7 +116,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
 }
 
-- (void)encryptPasswordLegado:(CDVInvokedUrlCommand*)command
+- (void)encryptPassword:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
     NSString* message = [command.arguments objectAtIndex:0];

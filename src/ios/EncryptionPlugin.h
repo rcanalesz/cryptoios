@@ -16,7 +16,7 @@
 - (void)decrypt:(CDVInvokedUrlCommand *)command;
 - (void)encryptRSA:(CDVInvokedUrlCommand *)command;
 - (void)decryptRSA:(CDVInvokedUrlCommand *)command;
-- (void)encryptPasswordLegado:(CDVInvokedUrlCommand *)command;
+- (void)encryptPassword:(CDVInvokedUrlCommand *)command;
 
 
 - (NSString*)decryptRSAEASString:(NSString*)string privateKey:(NSString*)pvK;
