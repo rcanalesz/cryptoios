@@ -1,7 +1,7 @@
 #import "EncryptionPlugin.h"
 #import <Cordova/CDVPlugin.h>
 
-#import "RSA.h"
+#import "ENCRSA.h"
 
 #define LOGGING_FACILITY(X, Y)  \
 if(!(X)) {          \
@@ -144,7 +144,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
  
     NSString* pubkey = pbK;
     
-    NSString *encWithPubKey = [RSA encryptString:signatureString publicKey:pubkey];
+    NSString *encWithPubKey = [ENCRSA encryptString:signatureString publicKey:pubkey];
 
     NSData *plainText = [string dataUsingEncoding:NSUTF8StringEncoding];
  
@@ -161,7 +161,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     NSString * KeyRSAEncripted = [string substringWithRange:NSMakeRange(0, 684)];
   
-    NSString * decWithPrivKey = [RSA decryptString:KeyRSAEncripted privateKey:privkey];
+    NSString * decWithPrivKey = [ENCRSA decryptString:KeyRSAEncripted privateKey:privkey];
    
     NSData *prueba05bytes = [self base64DecodeString:decWithPrivKey];
 
@@ -177,7 +177,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 {
     NSString* pubkey = pbK;
     
-    NSString *finalString = [RSA encryptString:string publicKey:pubkey];
+    NSString *finalString = [ENCRSA encryptString:string publicKey:pubkey];
 
     return finalString;
 }
@@ -188,7 +188,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     NSString * KeyRSAEncripted = string;
   
-    NSString * decWithPrivKey = [RSA decryptStringCustom:string privateKey:privkey];
+    NSString * decWithPrivKey = [ENCRSA decryptStringCustom:string privateKey:privkey];
 
     NSData *prueba05bytes = [self base64DecodeString:decWithPrivKey];
 
